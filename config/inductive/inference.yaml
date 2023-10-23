@@ -1,8 +1,8 @@
-output_dir: ~/git/ultra_pyg_dev/output
+output_dir: ~/git/ULTRA/output
 
 dataset:
   class: {{ dataset }}
-  root: ~/git/ultra_pyg_dev/kg-datasets/
+  root: ~/git/ULTRA/kg-datasets/
   version: {{ version }}
 
 model:

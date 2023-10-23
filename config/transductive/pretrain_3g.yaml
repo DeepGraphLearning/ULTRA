@@ -1,9 +1,9 @@
-output_dir: ~/nosnap/ultra_outputs/
+output_dir: ~/git/ULTRA/output
 
 dataset:
   class: JointDataset
   graphs: [FB15k237, WN18RR, CoDExMedium]
-  root: ~/nosnap/ultra_datasets/
+  root: ~/git/ULTRA/kg-datasets/
 
 model:
   class: Ultra
