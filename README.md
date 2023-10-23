@@ -119,10 +119,10 @@ Zero-shot performance of the checkpoints compared to the paper version (PyG expe
     </tr>
     <tr>
         <th>ULTRA (3g) PyG</th>
-        <td align="center">0.417</td>
-        <td align="center">0.558</td>
-        <td align="center">0.339</td>
-        <td align="center">0.506</td>
+        <td align="center">0.420</td>
+        <td align="center">0.562</td>
+        <td align="center">0.344</td>
+        <td align="center">0.511</td>
     </tr>
     <tr>
         <th>ULTRA (4g) PyG</th>
