@@ -26,7 +26,7 @@ Following the *pretrain-finetune* paradigm of foundation models, you can run a p
 ULTRA provides **<u>u</u>nified, <u>l</u>earnable, <u>tra</u>nsferable** representations for any KG. Under the hood, ULTRA employs graph neural networks and modified versions of [NBFNet](https://github.com/KiddoZhu/NBFNet-PyG).
 ULTRA does not learn any entity and relation embeddings specific to a downstream graph but instead obtains *relative relation representations* based on interactions between relations.
 
-The original implementation with the TorchDrug framework is available [here]() for reproduction purposes.
+The original implementation with the TorchDrug framework is available [here](https://github.com/DeepGraphLearning/ultra_torchdrug) for reproduction purposes.
 
 This repository is based on PyTorch 2.1 and PyTorch-Geometric 2.4. 
 
