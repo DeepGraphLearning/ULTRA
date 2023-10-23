@@ -1,0 +1,44 @@
+output_dir: ~/git/ultra_pyg_dev/output
+
+dataset:
+  class: {{ dataset }}
+  root: ~/git/ultra_pyg_dev/kg-datasets/
+
+model:
+  class: Ultra
+  relation_model:
+    class: NBFNet
+    input_dim: 64
+    hidden_dims: [64, 64, 64, 64, 64, 64]
+    message_func: distmult
+    aggregate_func: sum
+    short_cut: yes
+    layer_norm: yes
+  entity_model:
+    class: IndNBFNet
+    input_dim: 64
+    hidden_dims: [64, 64, 64, 64, 64, 64]
+    message_func: distmult
+    aggregate_func: sum
+    short_cut: yes
+    layer_norm: yes
+
+task:
+  name: TransductiveInference
+  num_negative: 256
+  strict_negative: yes
+  adversarial_temperature: 1
+  metric: [mr, mrr, hits@1, hits@3, hits@10]
+
+optimizer:
+  class: AdamW
+  lr: 5.0e-4
+
+train:
+  gpus: {{ gpus }}
+  batch_size: 8
+  num_epoch: {{ epochs }}
+  log_interval: 100
+  batch_per_epoch: {{ bpe }}
+
+checkpoint: {{ ckpt }}
