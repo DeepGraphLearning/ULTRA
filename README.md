@@ -50,7 +50,7 @@ Table of contents:
 ## Installation ##
 
 You may install the dependencies via either conda or pip. 
-Ultra PyG is implemented with Python 3.9, PyTorch 2.1 and PyG 2.4 (CUDA 11.8 or later wnen running on GPUs). If you are on a Mac, you may omit the CUDA toolkit requirements.
+Ultra PyG is implemented with Python 3.9, PyTorch 2.1 and PyG 2.4 (CUDA 11.8 or later when running on GPUs). If you are on a Mac, you may omit the CUDA toolkit requirements.
 
 ### From Conda ###
 
