@@ -21,7 +21,7 @@ PyG implementation of [ULTRA], a foundation model for KG reasoning. Authored by 
 ## Overview ##
 
 ULTRA is a foundation model for knowledge graph (KG) reasoning. A single pre-trained ULTRA model performs link prediction tasks on *any* multi-relational graph with any entity / relation vocabulary. Performance-wise averaged on 50+ KGs, a single pre-trained ULTRA model is better **in the 0-shot inference mode** than many SOTA models trained specifically on each graph. 
-Following the *pretrain-finetune* paradigm of foundation models, you can run a pre-trained ULTRA checkpoint immediately in the zero-shot manner on any graph as well as use more fine-tuninig. 
+Following the *pretrain-finetune* paradigm of foundation models, you can run a pre-trained ULTRA checkpoint immediately in the zero-shot manner on any graph as well as use more fine-tuning. 
 
 ULTRA provides **<u>u</u>nified, <u>l</u>earnable, <u>tra</u>nsferable** representations for any KG. Under the hood, ULTRA employs graph neural networks and modified versions of [NBFNet](https://github.com/KiddoZhu/NBFNet-PyG).
 ULTRA does not learn any entity and relation embeddings specific to a downstream graph but instead obtains *relative relation representations* based on interactions between relations.
@@ -174,7 +174,7 @@ python script/run.py -c config/transductive/inference.yaml --dataset CoDExSmall 
 The `run_many.py` script is a convenient way to run evaluation (0-shot inference and fine-tuning) on several datasets sequentially. Upon completion, the script will generate a csv file `ultra_results_<timestamp>` with the test set results and chosen metrics. 
 Using the same config files, you only need to specify:
 
-* `-c <yaml config>`: use the full path to the yaml config because workdip will be reset after each dataset; 
+* `-c <yaml config>`: use the full path to the yaml config because workdir will be reset after each dataset; 
 * `-d, --datasets`: a comma-separated list of [datasets](#datasets) to run, inductive datasets use the `name:version` convention. For example, `-d ILPC2022:small,ILPC2022:large`;
 * `--ckpt`: ULTRA checkpoint to run the experiments on, use the full path to the file;
 * `--gpus`: the same as in [run single](#run-a-single-experiment);
