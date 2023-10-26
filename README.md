@@ -313,7 +313,7 @@ class CustomDataset(TransductiveDataset):
 ```
 </details>
 
-* `InductiveDataset` requires 4 links in the `urls` field by convention `urls = ["transductive_train_set_link", "inference_graph_link", "inference_valid_set_link", "inference_test_set_link"]` and `name`. By default, we assume that validation and test edges are based on `inference_graph` (but you can modity the loaders to account for different combinations).
+* `InductiveDataset` requires 4 links in the `urls` field by convention `urls = ["transductive_train_set_link", "inference_graph_link", "inference_valid_set_link", "inference_test_set_link"]` and `name`. By default, we assume that validation and test edges are based on `inference_graph` (but you can modify the loaders to account for different combinations).
 
 <details>
 <summary>Code example</summary>
