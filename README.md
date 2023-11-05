@@ -151,7 +151,7 @@ The `run.py` command requires the following arguments:
 * `--epochs`: number of epochs to train, `--epochs 0` means running zero-shot inference.
 * `--bpe`: batches per epoch (replaces the length of the dataloader as default value). `--bpe 100 --epochs 10` means that each epoch consists of 100 batches, and overall training is 1000 batches. Set `--bpe null` to use the full length dataloader or comment the `bpe` line in the yaml configs.
 * `--gpus`: number of gpu devices, set to `--gpus null` when running on CPUs, `--gpus [0]` for a single GPU, or otherwise set the number of GPUs for a [distributed setup](#distributed-setup)
-* `--ckpt`: path to the one of the ULTRA checkpoints to use (you can use those provided in the repo ot trained on your own). Use `--ckpt null` to start training from scratch (or run zero-shot inference on a randomly initialized model, it still might surprise you and demonstrate non-zero performance).
+* `--ckpt`: **full** path to the one of the ULTRA checkpoints to use (you can use those provided in the repo ot trained on your own). Use `--ckpt null` to start training from scratch (or run zero-shot inference on a randomly initialized model, it still might surprise you and demonstrate non-zero performance).
 
 Zero-shot inference setup is `--epochs 0` with a given checkpoint `ckpt`.
 
@@ -161,12 +161,12 @@ Fine-tuning of a checkpoint is when epochs > 0 with a given checkpoint.
 An example command for an inductive dataset to run on a CPU: 
 
 ```bash
-python script/run.py -c config/inductive/inference.yaml --dataset FB15k237Inductive --version v1 --epochs 0 --bpe null --gpus null --ckpt ckpts/ultra_4g.pth
+python script/run.py -c config/inductive/inference.yaml --dataset FB15k237Inductive --version v1 --epochs 0 --bpe null --gpus null --ckpt /path/to/ultra/ckpts/ultra_4g.pth
 ```
 
 An example command for a transductive dataset to run on a GPU:
 ```bash
-python script/run.py -c config/transductive/inference.yaml --dataset CoDExSmall --epochs 0 --bpe null --gpus [0] --ckpt ckpts/ultra_4g.pth
+python script/run.py -c config/transductive/inference.yaml --dataset CoDExSmall --epochs 0 --bpe null --gpus [0] --ckpt /path/to/ultra/ckpts/ultra_4g.pth
 ```
 
 ### Run on many datasets
@@ -176,7 +176,7 @@ Using the same config files, you only need to specify:
 
 * `-c <yaml config>`: use the full path to the yaml config because workdir will be reset after each dataset; 
 * `-d, --datasets`: a comma-separated list of [datasets](#datasets) to run, inductive datasets use the `name:version` convention. For example, `-d ILPC2022:small,ILPC2022:large`;
-* `--ckpt`: ULTRA checkpoint to run the experiments on, use the full path to the file;
+* `--ckpt`: ULTRA checkpoint to run the experiments on, use the **full** path to the file;
 * `--gpus`: the same as in [run single](#run-a-single-experiment);
 * `-reps` (optional): number of repeats with different seeds, set by default to 1 for zero-shot inference;
 * `-ft, --finetune` (optional): use the finetuning configs of ULTRA (`default_finetuning_config`) to fine-tune a given checkpoint for specified `epochs` and `bpe`;
