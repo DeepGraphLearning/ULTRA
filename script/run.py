@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import pprint
+from itertools import islice
 
 import torch
 import torch_geometric as pyg
@@ -59,7 +60,7 @@ def train_and_validate(cfg, model, train_data, valid_data, device, logger, filte
 
             losses = []
             sampler.set_epoch(epoch)
-            for batch in train_loader:
+            for batch in islice(train_loader, batch_per_epoch):
                 batch = tasks.negative_sampling(train_data, batch, cfg.task.num_negative,
                                                 strict=cfg.task.strict_negative)
                 pred = parallel_model(train_data, batch)
