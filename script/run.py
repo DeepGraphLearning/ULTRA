@@ -289,7 +289,7 @@ if __name__ == "__main__":
     val_filtered_data = val_filtered_data.to(device)
     test_filtered_data = test_filtered_data.to(device)
     
-    train_and_validate(cfg, model, train_data, valid_data, filtered_data=val_filtered_data, device=device, logger=logger)
+    train_and_validate(cfg, model, train_data, valid_data, filtered_data=val_filtered_data, device=device, batch_per_epoch=cfg.train.batch_per_epoch, logger=logger)
     if util.get_rank() == 0:
         logger.warning(separator)
         logger.warning("Evaluate on valid")
