@@ -3,6 +3,7 @@ import sys
 import math
 import pprint
 from itertools import islice
+from tqdm import tqdm
 
 import torch
 import torch_geometric as pyg
@@ -131,7 +132,7 @@ def test(cfg, model, test_data, device, logger, filtered_data=None, return_metri
     rankings = []
     num_negatives = []
     tail_rankings, num_tail_negs = [], []  # for explicit tail-only evaluation needed for 5 datasets
-    for batch in test_loader:
+    for batch in tqdm(test_loader):
         t_batch, h_batch = tasks.all_negative(test_data, batch)
         t_pred = model(test_data, t_batch)
         h_pred = model(test_data, h_batch)
