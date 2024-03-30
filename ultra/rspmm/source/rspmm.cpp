@@ -135,7 +135,7 @@ Tensor rspmm_forward_cpu(const Tensor &edge_index_, const Tensor &edge_type_, co
     const Tensor relation = relation_.contiguous();
     const Tensor input = input_.contiguous();
 
-    int64_t nnz = edge_index.size(0);
+    int64_t nnz = edge_index.size(1);
     int64_t num_row = input.size(0);
     int64_t dim = input.size(1);
     Tensor output = at::empty({num_row, dim}, input.options());
@@ -183,7 +183,7 @@ std::tuple<Tensor, Tensor, Tensor> rspmm_backward_cpu(
     const Tensor output = output_.contiguous();
     const Tensor output_grad = output_grad_.contiguous();
 
-    int64_t nnz = edge_index.size(0);
+    int64_t nnz = edge_index.size(1);
     int64_t num_row = input.size(0);
     int64_t dim = input.size(1);
     Tensor weight_grad = at::zeros_like(edge_weight);
