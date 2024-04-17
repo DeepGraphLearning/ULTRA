@@ -241,7 +241,7 @@ Tensor rspmm_forward_cuda(const Tensor &edge_index_, const Tensor &edge_type_, c
     Tensor layer_ind = edge_type;
 
     cudaSetDevice(input.get_device());
-    auto stream = at::cuda::getCurrentCUDAStream();
+    auto stream = at::cuda::getCurrentCUDAStream(input.get_device());
 
     const int dim_per_block = 32; // warpSize
     const int num_dim_block = (dim + dim_per_block * kCoarseningFactor - 1) / (dim_per_block * kCoarseningFactor);
