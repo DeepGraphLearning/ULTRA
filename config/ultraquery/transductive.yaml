@@ -35,7 +35,7 @@ task:
   strict_negative: yes
   adversarial_temperature: 0.2
   sample_weight: no
-  metric: [mr, mrr, hits@1, hits@3, hits@10]   # auroc, spearmanr, mape are supported as well
+  metric: [mrr, hits@1, hits@3, hits@10]   # auroc, spearmanr, mape are supported as well
 
 optimizer:
   class: Adam
