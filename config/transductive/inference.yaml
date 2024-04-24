@@ -7,7 +7,7 @@ dataset:
 model:
   class: Ultra
   relation_model:
-    class: NBFNet
+    class: RelNBFNet
     input_dim: 64
     hidden_dims: [64, 64, 64, 64, 64, 64]
     message_func: distmult
@@ -15,7 +15,7 @@ model:
     short_cut: yes
     layer_norm: yes
   entity_model:
-    class: IndNBFNet
+    class: EntityNBFNet
     input_dim: 64
     hidden_dims: [64, 64, 64, 64, 64, 64]
     message_func: distmult

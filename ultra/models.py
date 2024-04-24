@@ -10,8 +10,9 @@ class Ultra(nn.Module):
         # kept that because super Ultra sounds cool
         super(Ultra, self).__init__()
 
-        self.relation_model = RelNBFNet(**rel_model_cfg)
-        self.entity_model = EntityNBFNet(**entity_model_cfg)
+        # adding a bit more flexibility to initializing proper rel/ent classes from the configs
+        self.relation_model = globals()[rel_model_cfg.pop('class')](**rel_model_cfg)
+        self.entity_model = globals()[entity_model_cfg.pop('class')](**entity_model_cfg)
 
         
     def forward(self, data, batch):
@@ -207,7 +208,71 @@ class EntityNBFNet(BaseNBFNet):
         score = self.mlp(feature).squeeze(-1)
         return score.view(shape)
 
+
+class QueryNBFNet(EntityNBFNet):
+    """
+    The entity-level reasoner for UltraQuery-like complex query answering pipelines
+    Almost the same as EntityNBFNet except that 
+    (1) we already get the initial node features at the forward pass time 
+    and don't have to read the triples batch
+    (2) we get `query` from the outer loop
+    (3) we return a distribution over all nodes (assuming t_index = all nodes)
+    """
     
+    def bellmanford(self, data, node_features, query, separate_grad=False):
+        
+        size = (data.num_nodes, data.num_nodes)
+        edge_weight = torch.ones(data.num_edges, device=query.device)
+
+        hiddens = []
+        edge_weights = []
+        layer_input = node_features
+
+        for layer in self.layers:
+
+            # for visualization
+            if separate_grad:
+                edge_weight = edge_weight.clone().requires_grad_()
+
+            # Bellman-Ford iteration, we send the original boundary condition in addition to the updated node states
+            hidden = layer(layer_input, query, node_features, data.edge_index, data.edge_type, size, edge_weight)
+            if self.short_cut and hidden.shape == layer_input.shape:
+                # residual connection here
+                hidden = hidden + layer_input
+            hiddens.append(hidden)
+            edge_weights.append(edge_weight)
+            layer_input = hidden
+
+        # original query (relation type) embeddings
+        node_query = query.unsqueeze(1).expand(-1, data.num_nodes, -1) # (batch_size, num_nodes, input_dim)
+        if self.concat_hidden:
+            output = torch.cat(hiddens + [node_query], dim=-1)
+        else:
+            output = torch.cat([hiddens[-1], node_query], dim=-1)
+
+        return {
+            "node_feature": output,
+            "edge_weights": edge_weights,
+        }
+
+    def forward(self, data, node_features, relation_representations, query):
+
+        # initialize relations in each NBFNet layer (with uinque projection internally)
+        for layer in self.layers:
+            layer.relation = relation_representations
+
+        # we already did traversal_dropout in the outer loop of UltraQuery
+        # if self.training:
+        #     # Edge dropout in the training mode
+        #     # here we want to remove immediate edges (head, relation, tail) from the edge_index and edge_types
+        #     # to make NBFNet iteration learn non-trivial paths
+        #     data = self.remove_easy_edges(data, h_index, t_index, r_index)
+
+        # node features arrive in shape (bs, num_nodes, dim)
+        # NBFNet needs batch size on the first place
+        output = self.bellmanford(data, node_features, query)  # (num_nodes, batch_size, feature_dim）
+        score = self.mlp(output["node_feature"]).squeeze(-1) # (bs, num_nodes)
+        return score  
 
     
 

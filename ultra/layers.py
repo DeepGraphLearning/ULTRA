@@ -3,6 +3,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch_scatter import scatter
 
+import torch_geometric
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import degree
 from typing import Tuple
@@ -104,7 +105,12 @@ class GeneralizedRelationalConv(MessagePassing):
         size = self._check_input(edge_index, size)
         coll_dict = self._collect(self._fused_user_args, edge_index, size, kwargs)
 
-        msg_aggr_kwargs = self.inspector.distribute("message_and_aggregate", coll_dict)
+        # TODO: use from packaging.version import parse as parse_version as by default 2.4 > 2.14 which is wrong
+        # Let's collectively hope there will be PyG 3.0 after 2.9 and not 2.10
+        pyg_version = [int(i) for i in torch_geometric.__version__.split(".")]
+        col_fn = self.inspector.distribute if pyg_version[1] <= 4 else self.inspector.collect_param_data
+
+        msg_aggr_kwargs = col_fn("message_and_aggregate", coll_dict)
         for hook in self._message_and_aggregate_forward_pre_hooks.values():
             res = hook(self, (edge_index, msg_aggr_kwargs))
             if res is not None:
@@ -115,7 +121,8 @@ class GeneralizedRelationalConv(MessagePassing):
             if res is not None:
                 out = res
 
-        update_kwargs = self.inspector.distribute("update", coll_dict)
+        # PyG 2.5+ distribute -> collect_param_data
+        update_kwargs = col_fn("update", coll_dict)
         out = self.update(out, **update_kwargs)
 
         for hook in self._propagate_forward_hooks.values():
