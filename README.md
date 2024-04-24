@@ -4,7 +4,8 @@
 
 [![pytorch](https://img.shields.io/badge/PyTorch_2.1+-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 [![pyg](https://img.shields.io/badge/PyG_2.4+-3C2179?logo=pyg&logoColor=#3C2179)](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
-[![arxiv](http://img.shields.io/badge/arxiv-2310.04562-yellow.svg)](https://arxiv.org/abs/2310.04562)
+[![ULTRA arxiv](http://img.shields.io/badge/arxiv-2310.04562-yellow.svg)](https://arxiv.org/abs/2310.04562)
+[![UltraQuery arxiv](http://img.shields.io/badge/arxiv-2404.07198-yellow.svg)](https://arxiv.org/abs/2404.07198)
 [![HuggingFace Hub](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-black)](https://huggingface.co/collections/mgalkin/ultra-65699bb28369400a5827669d)
 ![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)
 
@@ -37,6 +38,7 @@ This repository is based on PyTorch 2.1 and PyTorch-Geometric 2.4.
 * [Pre-train](#pretraining) ULTRA on your own mixture of graphs.
 * Run [evaluation on many datasets](#run-on-many-datasets) sequentially.
 * Use the pre-trained checkpoints to run inference and fine-tuning on [your own KGs](#adding-your-own-graph).
+* (NEW) Execute complex logical queries on any KG with [UltraQuery](#ultraquery)
 
 Table of contents:
 * [Installation](#installation)
