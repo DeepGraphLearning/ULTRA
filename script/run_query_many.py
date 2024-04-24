@@ -64,7 +64,7 @@ if __name__ == "__main__":
             vars['bpe'] = batch_per_epoch
             vars['dataset'] = ds
             if version is not None:
-                vars['ratio'] = version
+                vars['version'] = version
 
             #args, vars = util.parse_args()
             cfg = util.load_config(args.config, context=vars)
