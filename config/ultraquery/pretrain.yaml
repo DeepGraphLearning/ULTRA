@@ -1,0 +1,53 @@
+output_dir: ~/git/ULTRA/output
+
+dataset:
+  class: FB15k237LogicalQuery
+  root: ~/git/ULTRA/query-datasets/
+
+
+model:
+  class: UltraQuery
+  model: 
+    class: Ultra
+    relation_model:
+      class: RelNBFNet
+      input_dim: 64
+      hidden_dims: [64, 64, 64, 64, 64, 64]
+      message_func: distmult
+      aggregate_func: sum
+      short_cut: yes
+      layer_norm: yes
+    entity_model:
+      class: QueryNBFNet
+      input_dim: 64
+      hidden_dims: [64, 64, 64, 64, 64, 64]
+      message_func: distmult
+      aggregate_func: sum
+      short_cut: yes
+      layer_norm: yes
+  logic: product
+  dropout_ratio: 0.25
+  threshold: 0.0
+  more_dropout: 0.0
+
+task:
+  name: TransductiveInference
+  strict_negative: yes
+  adversarial_temperature: 0.2
+  sample_weight: no
+  metric: [mrr, hits@1, hits@3, hits@10]   # auroc, spearmanr, mape are supported as well
+
+optimizer:
+  class: Adam
+  lr: 5.0e-4
+
+train:
+  gpus: {{ gpus }}
+  batch_size:  {{ bs }}                  # 32 for 4x 3090 (24 GB), adjust total num_steps accordingly
+  num_epoch: 10                          # total number of optimization steps will be num_epochs * batch_per_epoch
+  batch_per_epoch: 4000                  # number of batches to be considered as "one epoch"
+  log_interval: 400
+  fast_test: 1000                       # UltraQuery is slower in inference, use this option for a random subsample of valid data
+                 
+ultra_ckpt: ~/git/ULTRA/ckpts/ultra_4g.pth            # Initialize with Ultra 4g
+ultraquery_ckpt: null                   # UltraQuery checkpoint trained on complex queries
