@@ -181,8 +181,9 @@ def generalized_rspmm(edge_index, edge_type, edge_weight, relation, input, sum="
 def load_extension(name, sources, extra_cflags=None, extra_cuda_cflags=None, **kwargs):
     if extra_cflags is None:
         extra_cflags = ["-Ofast"]
-        # Torch 2.2.1+ for MacOS is compiled with OpenMP and compiling kernels with OpenMP
-        # requires bringing llvm and libomp, so skip that for MacOS and resort to a standard CPU version
+        # PyTorch 2.2.1+ on Apple Silicon is now compiled by default with OpenMP
+        # However, installing OpenMP on macs properly and wiring it together to the compiler is tedious
+        # So on macs we turn off OpenMP (as the default behavior in all torch < 2.2.1 versions)
         if torch.backends.openmp.is_available() and not sys.platform.startswith('darwin'):
             extra_cflags += ["-fopenmp", "-DAT_PARALLEL_OPENMP"]
         else:
