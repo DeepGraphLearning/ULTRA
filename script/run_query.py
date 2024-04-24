@@ -90,7 +90,7 @@ def train_and_validate(cfg, model, train_graph, train_data, valid_graph, valid_d
             for batch in islice(train_loader, batch_per_epoch):
                 if device.type == "cuda":
                     train_graph = train_graph.to(device)
-                    batch = util.cuda(batch, device=device)
+                    batch = query_utils.cuda(batch, device=device)
                 pred, target = predict_and_target(parallel_model, train_graph, batch)
 
                 loss = F.binary_cross_entropy_with_logits(pred, target, reduction="none")
@@ -168,7 +168,7 @@ def test(cfg, model, test_graph, test_data, query_id2type, device, logger, retur
     for batch in tqdm(test_loader):
         if device.type == "cuda":
             test_graph = test_graph.to(device)
-            batch = util.cuda(batch, device=device)
+            batch = query_utils.cuda(batch, device=device)
         
         predictions, target = predict_and_target(model, test_graph, batch)
         preds.append(predictions)

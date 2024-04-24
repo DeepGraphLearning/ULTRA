@@ -3,7 +3,7 @@ output_dir: ~/git/ULTRA/output
 dataset:
   class: {{ dataset }}
   root: ~/git/ULTRA/query-datasets/
-  version: {{ ratio }}                # specify dataset ratio here or when running the script
+  version: {{ version }}                # specify dataset version here or when running the script
 
 model:
   class: UltraQuery
