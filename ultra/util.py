@@ -1,8 +1,8 @@
 import os
-import sys
 import ast
 import copy
 import time
+import pickle
 import logging
 import argparse
 
@@ -162,4 +162,37 @@ def build_dataset(cfg):
                             ))
 
     return dataset
+
+
+def load_language_model_vectors(entity_vocab, path):
+    """
+    Loads the language model vectors from a pickle file, matching keys to the entities in entity_vocab.
+    The loaded vectors are ordered in the same order as the entities in entity_vocab.
+
+    Args:
+    entity_vocab (dict): A dictionary mapping entities to their indices.
+    path (str): Path to the pickle file containing the entity vectors.
+
+    Returns:
+    torch.Tensor: A tensor of entity vectors ordered according to entity_vocab.
+    """
+    with open(path, 'rb') as f:
+        entity2vec = pickle.load(f)
+
+    vector_shape = next(iter(entity2vec.values())).shape
+    entity2lm_vectors = []
+    num_entities_embedded = 0
+
+    for entity, _ in entity_vocab.items():
+        try:
+            entity_embd = torch.tensor(entity2vec[entity])
+            entity2lm_vectors.append(entity_embd)
+            num_entities_embedded += 1
+        except KeyError:
+            logger.warning(f'Embeddings not found for entity: {entity}, initializing with zeros.')
+            entity2lm_vectors.append(torch.zeros(vector_shape))
+
+    logger.info(f'Total entities with pre-trained embeddings: {num_entities_embedded} out of {len(entity_vocab)} entities.')
+
+    return torch.stack(entity2lm_vectors).float()
 

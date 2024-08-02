@@ -274,6 +274,79 @@ class QueryNBFNet(EntityNBFNet):
         score = self.mlp(output["node_feature"]).squeeze(-1) # (bs, num_nodes)
         return score  
 
-    
+
+class LmNBFNet(EntityNBFNet):
+
+
+    def __init__(self, input_dim, hidden_dims, num_relation=1, **kwargs):
+        super().__init__(input_dim, hidden_dims, num_relation, **kwargs)
+        
+        if 'lm_vectors' not in kwargs:
+            raise ValueError("Please provide the language model vectors for the LmNBFNet.")
+        
+        self.lm_vectors = nn.Embedding.from_pretrained(kwargs['lm_vectors'], freeze=True)
+        
+        # define the merge strategy
+        # can be replaced with more sophisticated strategies
+        lm_vectors_dim = self.lm_vectors.weight.shape[-1]
+        merge_dim = lm_vectors_dim + hidden_dims[0]
+        self.merge_linear = nn.Sequential(
+            nn.Linear(merge_dim, merge_dim // 2),
+            nn.ReLU(),
+            nn.Linear(merge_dim // 2, hidden_dims[0])
+        )
+        
+    def bellmanford(self, data, h_index, r_index, separate_grad=False):
+        batch_size = len(r_index)
+
+        # initialize queries (relation types of the given triples)
+        query = self.query[torch.arange(batch_size, device=r_index.device), r_index]
+        index = h_index.unsqueeze(-1).expand_as(query)
+
+        # initial (boundary) condition - initialize all node states as zeros
+        boundary = torch.zeros(batch_size, data.num_nodes, self.dims[0], device=h_index.device)
+        # by the scatter operation we put query (relation) embeddings as init features of source (index) nodes
+        boundary.scatter_add_(1, index.unsqueeze(1), query.unsqueeze(1))
+
+        # interaction of boundary with lm vectors
+        lm_vectors = self.lm_vectors.weight.data.repeat(batch_size, 1, 1)
+
+        # concat the boundary (graph relational features) with the language model vectors
+        boundary = torch.cat([boundary, lm_vectors], dim=-1)
+        boundary = self.merge_linear(boundary)
+
+        size = (data.num_nodes, data.num_nodes)
+        edge_weight = torch.ones(data.num_edges, device=h_index.device)
+
+        hiddens = []
+        edge_weights = []
+        layer_input = boundary
+
+        for layer in self.layers:
+
+            # for visualization
+            if separate_grad:
+                edge_weight = edge_weight.clone().requires_grad_()
+
+            # Bellman-Ford iteration, we send the original boundary condition in addition to the updated node states
+            hidden = layer(layer_input, query, boundary, data.edge_index, data.edge_type, size, edge_weight)
+            if self.short_cut and hidden.shape == layer_input.shape:
+                # residual connection here
+                hidden = hidden + layer_input
+            hiddens.append(hidden)
+            edge_weights.append(edge_weight)
+            layer_input = hidden
+
+        # original query (relation type) embeddings
+        node_query = query.unsqueeze(1).expand(-1, data.num_nodes, -1) # (batch_size, num_nodes, input_dim)
+        if self.concat_hidden:
+            output = torch.cat(hiddens + [node_query], dim=-1)
+        else:
+            output = torch.cat([hiddens[-1], node_query], dim=-1)
+
+        return {
+            "node_feature": output,
+            "edge_weights": edge_weights,
+        }
 
 
