@@ -517,7 +517,13 @@ The original goal of the dataset is to predict the `cpe` (Common Platform Enumer
 ### Running ULTRA-LM
 To run ULTRA-LM, you need to download the pre-trained language model embeddings from [here](https://github.com/acsac24submissionvulnscopper/VulnScopper/releases/download/dataset/redhat_entity2vec.pickle).</br> Place the file within ULTRA's root directory (or any inner directory). 
 
-**IMPORTANT!** Remember to replace `lm_vectors` parameter with the complete path to the `redhat_entity2vec.pickle` file in the `config/ultralm/pretrain.yaml` file.
+**IMPORTANT!** Remember to replace `lm_vectors` parameter with the complete path (from the root, without using `~`) to the `redhat_entity2vec.pickle` file in the `config/ultralm/pretrain.yaml` configuration file.
+
+To run ULTRA-LM with multiple GPUs, use the following commands:
+
+```bash
+python -m torch.distributed.launch --nproc_per_node=2 script/pretrain_lm.py -c config/ultralm/pretrain.yaml --dataset RedHatCVE --epochs 10 --bpe null --gpus [0,1]
+```
 
 ## Citation ##
 

@@ -257,7 +257,7 @@ if __name__ == "__main__":
     valid_data = [vd.to(device) for vd in valid_data]
     test_data = [tst.to(device) for tst in test_data]
 
-    lm_vectors = util.load_language_model_vectors(train_data[0].entity_vocab, cfg.train.lm_vectors)
+    lm_vectors = util.load_language_model_vectors(train_data[0].metadata['entity_vocab'], cfg.train.lm_vectors)
     cfg.model.entity_model["lm_vectors"] = lm_vectors
 
     model = Ultra(

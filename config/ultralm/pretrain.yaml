@@ -44,4 +44,4 @@ train:
   batch_per_epoch: 1000
   fast_test: 500
   #logger: wandb
-  lm_vectors: ~/ULTRA/description_vectors/redhat_entity2vec.pickle
+  lm_vectors: /home/REPLACE_WITH_USER/ULTRA/descriptions-datasets/redhat_entity2vec.pickle
