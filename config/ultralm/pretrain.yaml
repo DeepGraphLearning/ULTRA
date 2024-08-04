@@ -3,7 +3,6 @@ output_dir: ~/ULTRA/output
 dataset:
   class: JointDataset
   graphs: [RedHatCVE]
-  #TODO: change the path later back to orig
   root: ~/ULTRA/kg-datasets/
 
 model:
