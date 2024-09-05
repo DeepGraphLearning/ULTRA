@@ -325,6 +325,24 @@ class TransductiveDataset(InMemoryDataset):
         test_data = Data(edge_index=train_edges, edge_type=train_etypes, num_nodes=num_node,
                          target_edge_index=test_edges, target_edge_type=test_etypes, num_relations=num_relations*2)
 
+        # Merge vocabularies from all splits
+        entity_vocab = {**train_results["inv_entity_vocab"], 
+                        **valid_results["inv_entity_vocab"], 
+                        **test_results["inv_entity_vocab"]}
+        rel_vocab = {**train_results["inv_rel_vocab"], 
+                    **valid_results["inv_rel_vocab"], 
+                    **test_results["inv_rel_vocab"]}
+
+        # Create a single dictionary for all metadata
+        metadata = {
+            'entity_vocab': entity_vocab,
+            'rel_vocab': rel_vocab
+        }
+
+        # Assign metadata to each split
+        for data in [train_data, valid_data, test_data]:
+            setattr(data, 'metadata', metadata)
+
         # build graphs of relations
         if self.pre_transform is not None:
             train_data = self.pre_transform(train_data)
@@ -685,6 +703,25 @@ class InductiveDataset(InMemoryDataset):
                           num_relations=inference_num_rels*2 if self.valid_on_inf else num_train_rels*2)
         test_data = Data(edge_index=inf_edges, edge_type=inf_etypes, num_nodes=inference_num_nodes,
                          target_edge_index=inf_test_edges[:, :2].T, target_edge_type=inf_test_edges[:, 2], num_relations=inference_num_rels*2)
+
+        # Merge vocabularies from all splits
+        entity_vocab = {**train_res["inv_entity_vocab"], 
+                        **inference_res["inv_entity_vocab"],
+                        **valid_res["inv_entity_vocab"], 
+                        **test_res["inv_entity_vocab"]}
+        rel_vocab = {**train_res["inv_rel_vocab"], 
+                    **valid_res["inv_rel_vocab"], 
+                    **test_res["inv_rel_vocab"]}
+
+        # Create a single dictionary for all metadata
+        metadata = {
+            'entity_vocab': entity_vocab,
+            'rel_vocab': rel_vocab
+        }
+
+        # Assign metadata to each split
+        for data in [train_data, valid_data, test_data]:
+            data.metadata = metadata
 
         if self.pre_transform is not None:
             train_data = self.pre_transform(train_data)
@@ -1047,6 +1084,21 @@ class WikiTopicsMT4(MTDEAInductive):
         super(WikiTopicsMT4, self).__init__(**kwargs)
 
 
+class RedHatCVE(TransductiveDataset):
+    """
+    RedHat CVE dataset from VulnScopper paper.
+    This dataset is inductive node-wise (nodes in the valid, test sets are not seen in the training graph).
+    """
+    name = "RedHatCVE"
+    delimiter = '\t'
+
+    urls = [
+        "https://gist.githubusercontent.com/daniel4x/51f8fcc77907aa28f737a0b05d500579/raw/ee81f8079e072b3c57064696e86f008110a5078c/train.txt",
+        "https://gist.githubusercontent.com/daniel4x/51f8fcc77907aa28f737a0b05d500579/raw/ee81f8079e072b3c57064696e86f008110a5078c/valid.txt",
+        "https://gist.githubusercontent.com/daniel4x/51f8fcc77907aa28f737a0b05d500579/raw/ee81f8079e072b3c57064696e86f008110a5078c/test.txt"
+    ]
+
+
 # a joint dataset for pre-training ULTRA on several graphs
 class JointDataset(InMemoryDataset):
 
@@ -1061,6 +1113,7 @@ class JointDataset(InMemoryDataset):
         'DBpedia100k': DBpedia100k,
         'YAGO310': YAGO310,
         'AristoV4': AristoV4,
+        'RedHatCVE': RedHatCVE,
     }
 
     def __init__(self, root, graphs, transform=None, pre_transform=None):
@@ -1093,3 +1146,4 @@ class JointDataset(InMemoryDataset):
         # ]
 
         torch.save((train_data, valid_data, test_data), self.processed_paths[0])
+        

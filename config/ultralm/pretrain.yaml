@@ -1,0 +1,46 @@
+output_dir: ~/ULTRA/output
+
+dataset:
+  class: JointDataset
+  graphs: [RedHatCVE]
+  root: ~/ULTRA/kg-datasets/
+
+model:
+  class: Ultra
+  relation_model:
+    class: RelNBFNet
+    input_dim: 64
+    hidden_dims: [64, 64, 64, 64, 64, 64]
+    message_func: distmult
+    aggregate_func: sum
+    short_cut: yes
+    layer_norm: yes
+  entity_model:
+    class: LmNBFNet
+    input_dim: 64
+    hidden_dims: [64, 64, 64, 64, 64, 64]
+    message_func: distmult
+    aggregate_func: sum
+    short_cut: yes
+    layer_norm: yes
+
+task:
+  name: MultiGraphPretraining
+  num_negative: 512
+  strict_negative: yes
+  adversarial_temperature: 1
+  metric: [mr, mrr, hits@1, hits@3, hits@10]
+
+optimizer:
+  class: AdamW
+  lr: 5.0e-4
+
+train:
+  gpus: {{ gpus }}
+  batch_size: 32
+  num_epoch: 10
+  log_interval: 50
+  batch_per_epoch: 1000
+  fast_test: 500
+  #logger: wandb
+  lm_vectors: /home/REPLACE_WITH_USER/ULTRA/descriptions-datasets/redhat_entity2vec.pickle

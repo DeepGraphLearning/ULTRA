@@ -501,6 +501,30 @@ The queries were sampled from the WikiTopics splits proposed in [Double Equivari
 
 New metrics include `auroc`, `spearmanr`, `mape`. We don't support Mean Rank `mr` in complex queries. If you ever see `nan` in one of those metrics, consider reducing the batch size as those metrics are computed with the variadic functions that might be numerically unstable on large batches.
 
+## ULTRA-LM ##
+ULTRA-LM (Language Model Integration for ULTRA) is a new variant of ULTRA that integrates a language model embeddings into the KG reasoning pipeline. We assume that each entity has a textual description and we use a pre-trained language model to encode those descriptions into embeddings.</br>
+ULTRA-LM architecture is inspired by [Galkin's suggestion](https://github.com/DeepGraphLearning/ULTRA/issues/9).
+
+### Blogpost
+TBD Soon!
+
+### Dataset
+Currently, we provide one dataset supporting ULTRA-LM - `RedHatCVE` - a dataset of security vulnerabilities with textual descriptions. </br>
+The dataset inherit the `TransductiveDataset` class, the valid and test splits contains only unseen CVEs, thus the dataset is inductive (node-wise) in nature. The embeddings are obtained from the `OpenAI Ada`, however, you can use any other language model.</br>
+
+The original goal of the dataset is to predict the `cpe` (Common Platform Enumeration) of a given vulnerability. Therefore, we are mostly intrested in the `MatchingCVE` (head prediction) relation type during the evaluation. Complete details on the dataset can be found in [VulnScopper pre-print](https://deepness-lab.org/publications/unveiling-hidden-links-between-unseen-security-entities/).
+
+### Running ULTRA-LM
+To run ULTRA-LM, you need to download the pre-trained language model embeddings from [here](https://github.com/acsac24submissionvulnscopper/VulnScopper/releases/download/dataset/redhat_entity2vec.pickle).</br> Place the file within ULTRA's root directory (or any inner directory). 
+
+**IMPORTANT!** Remember to replace `lm_vectors` parameter with the complete path (from the root, without using `~`) to the `redhat_entity2vec.pickle` file in the `config/ultralm/pretrain.yaml` configuration file.
+
+To run ULTRA-LM with multiple GPUs, use the following commands:
+
+```bash
+python -m torch.distributed.launch --nproc_per_node=2 script/pretrain_lm.py -c config/ultralm/pretrain.yaml --dataset RedHatCVE --epochs 10 --bpe null --gpus [0,1]
+```
+
 ## Citation ##
 
 If you find this codebase useful in your research, please cite the original papers.
