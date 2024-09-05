@@ -40,8 +40,6 @@ Currently, ULTRA-LM supports the `RedHatCVE` dataset, which contains security vu
 
 ---
 
-# ULTRA: Towards Foundation Models for Knowledge Graph Reasoning
-
 <div align="center">
 
 # ULTRA: Towards Foundation Models for Knowledge Graph Reasoning #
