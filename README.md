@@ -1,5 +1,7 @@
 # ULTRA-LM: Integrating Graph Neural Networks with Language Models for Knowledge Graph Reasoning
 
+![ULTRA-LM](asset/ultra_lm.png)
+
 ## Overview
 
 This project extends the ULTRA (Unified, Learnable, and Transferable Representations for Knowledge Graphs) framework by integrating Language Models (LMs) to enrich entity-level features. This approach, which we call ULTRA-LM, combines the structural information captured by Graph Neural Networks (GNNs) with the rich semantic representations provided by LMs.
