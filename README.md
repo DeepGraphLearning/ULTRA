@@ -1,3 +1,45 @@
+# ULTRA-LM: Integrating Graph Neural Networks with Language Models for Knowledge Graph Reasoning
+
+## Overview
+
+This project extends the ULTRA (Unified, Learnable, and Transferable Representations for Knowledge Graphs) framework by integrating Language Models (LMs) to enrich entity-level features. This approach, which we call ULTRA-LM, combines the structural information captured by Graph Neural Networks (GNNs) with the rich semantic representations provided by LMs.
+
+## Key Features
+
+- Combines GNN-based structural representations with LM-based textual representations
+- Enhances link prediction tasks, especially for unseen entities and edges
+- Utilizes pre-trained language models (e.g., OpenAI's Ada) for text embedding
+- Supports both transductive and inductive learning scenarios
+
+## Implementation Details
+
+ULTRA-LM integrates GNN and LM representations through the following steps:
+
+1. **Graph Representation**: Utilizes ULTRA's existing GNN architecture to capture structural information.
+2. **Text Representation**: Employs pre-trained language models to generate embeddings for entity descriptions.
+3. **Combined Representation**: Introduces an intermediate layer to concatenate both graph and text features before the entity-level GNN processing.
+
+## Usage
+
+To use ULTRA-LM:
+
+1. Download the pre-trained language model embeddings from [here](https://github.com/acsac24submissionvulnscopper/VulnScopper/releases/download/dataset/redhat_entity2vec.pickle).
+2. Place the downloaded file in the ULTRA root directory.
+3. Update the `lm_vectors` parameter in `config/ultralm/pretrain.yaml` with the full path to the embeddings file.
+4. Run ULTRA-LM using the following command:
+
+```bash
+python -m torch.distributed.launch --nproc_per_node=2 script/pretrain_lm.py -c config/ultralm/pretrain.yaml --dataset RedHatCVE --epochs 10 --bpe null --gpus [0,1]
+```
+
+## Dataset
+
+Currently, ULTRA-LM supports the `RedHatCVE` dataset, which contains security vulnerabilities with textual descriptions. This dataset is inductive in nature, with validation and test splits containing only unseen CVEs.
+
+---
+
+# ULTRA: Towards Foundation Models for Knowledge Graph Reasoning
+
 <div align="center">
 
 # ULTRA: Towards Foundation Models for Knowledge Graph Reasoning #
